@@ -19,7 +19,11 @@ class ViewController: UIViewController {
             return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
         }
         set {
-            display.text = "\(newValue)"
+            if newValue == 0 {
+                display.text = "0"
+            } else {
+                display.text = "\(newValue)"
+            }
         }
     }
     
@@ -30,7 +34,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         display.text = "0"
-        history.text = ""
+        history.text = " "
     }
     
     @IBAction func enterDigit(sender: UIButton) {
@@ -45,11 +49,12 @@ class ViewController: UIViewController {
     @IBAction func enterDecimal() {
         if (numberEntryInProgress){
             if display.text?.rangeOfString(".") == nil {
-                //no decimal was found, so it's safe to add one
+                // no decimal was found, so it's safe to add one
                 display.text! += "."
             }
         } else {
-            //This must be the first button pressed in the current number
+            // This must be the first button pressed in the current number
+            // So prepand a zero
             display.text = "0."
             numberEntryInProgress = true
         }
@@ -81,6 +86,26 @@ class ViewController: UIViewController {
         default:
             break
         }
+    }
+    
+    @IBAction func removeLastDisplayNumber() {
+        if numberEntryInProgress {
+            let entrylength = countElements(display.text!)
+            if entrylength == 1 {
+                display.text = "0"
+                numberEntryInProgress = false
+            } else if entrylength > 1 {
+                display.text = dropLast(display.text!)
+            }
+            // else it's 0, so do nothing
+        }
+    }
+    
+    @IBAction func clear() {
+        history.text = " "
+        displayValue = 0
+        stack.removeAll(keepCapacity: true)
+        numberEntryInProgress = false
     }
     
     func performOperation (op: (Double, Double) -> Double) {
