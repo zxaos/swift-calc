@@ -239,6 +239,9 @@
                                 <state key="normal" title="π">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="enterConstant:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cyc-zX-TeZ"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yYj-qK-5Mn">
                                 <rect key="frame" x="274" y="383" width="62" height="62"/>
@@ -253,6 +256,9 @@
                                 <state key="normal" title="±">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="toggleSign" destination="BYZ-38-t0r" eventType="touchUpInside" id="a4e-f2-lhs"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vw8-YP-XFe">
                                 <rect key="frame" x="360" y="177" width="30" height="128"/>
@@ -260,13 +266,19 @@
                                 <state key="normal" title="sin">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="enterOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sVD-36-DN5"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yiZ-RR-zJw">
                                 <rect key="frame" x="398" y="177" width="94" height="128"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                <state key="normal">
+                                <state key="normal" title="√">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="enterOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZWa-OV-7u2"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F5Y-N7-O2L">
                                 <rect key="frame" x="500" y="177" width="30" height="128"/>
@@ -281,6 +293,9 @@
                                 <state key="normal" title="cos">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="enterOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4D1-2n-enk"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gzh-4d-GYY">
                                 <rect key="frame" x="274" y="453" width="62" height="62"/>
