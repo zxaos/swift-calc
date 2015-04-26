@@ -86,7 +86,7 @@ class ViewController: UIViewController {
     
     @IBAction func removeLastDisplayNumber() {
         if numberEntryInProgress {
-            let entrylength = countElements(display.text!)
+            let entrylength = count(display.text!)
             if entrylength == 1 {
                 display.text = "0"
                 numberEntryInProgress = false
@@ -153,7 +153,7 @@ class ViewController: UIViewController {
         return false
     }
     
-    func performOperation (op: (Double) -> Double) -> Bool {
+    private func performOperation (op: (Double) -> Double) -> Bool {
         if stack.count >= 1 {
             displayValue = op(stack.removeLast())
             numberEntryInProgress = true
