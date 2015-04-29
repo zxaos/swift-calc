@@ -13,15 +13,37 @@ import Calculator
 class CalculatorModelTests: XCTestCase {
     let c = CalculatorModel()
     
-    func testSubtraction() {
-        // 6 - 2 = 4
-        c.pushOperand(3)
-        c.pushOperand(5)
-        c.performOperation("−")
-        let result = c.evaluate()
+    func testThatBinaryOperationsGiveCorrectValueWithTwoOperands() {
+        // given 10 - 15 = -5
+        c.pushOperand(10)
+        c.pushOperand(15)
+        
+        // when
+        let result = c.performOperation("−")
+        
+        //then
         XCTAssertNotNil(result)
         if result != nil {
-            XCTAssertEqual(result!, -2.0)
+            XCTAssertEqual(result!, -5.0)
+        }
+    }
+    
+    func testThatItAppliesVariablesWhenEvaluating(){
+        //given r = 6 - x * 32 ;  x = -9 -> y = 294
+        c.pushOperand(6)
+        c.pushOperand("x")
+        c.pushOperand(32)
+        c.performOperation("×")
+        c.performOperation("−")
+        
+        //when
+        c.variableValue["x"] = -9
+        
+        let result = c.evaluate()
+        //then
+        XCTAssertNotNil(result)
+        if result != nil {
+            XCTAssertEqual(result!, 294)
         }
     }
     

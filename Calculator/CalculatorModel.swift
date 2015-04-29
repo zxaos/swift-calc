@@ -7,7 +7,7 @@
 //
 import Foundation
 
-public class CalculatorModel {
+public class CalculatorModel : Printable{
     
     private enum Op : Printable {
         case UnaryOperation(String, Double -> Double)
@@ -59,6 +59,12 @@ public class CalculatorModel {
         
     }
     
+    public var variableValue = [String:Double]() {
+        didSet {
+            evaluate(stack)
+        }
+    }
+    
     public func pushOperand(operand: Double){
         stack.append(Op.Operand(operand))
     }
@@ -85,6 +91,12 @@ public class CalculatorModel {
         return evaluate(stack).result
     }
     
+    public var description: String {
+        get {
+            return ""
+        }
+    }
+    
     /* Recursively evaluate an op stack*/
     private func evaluate(ops: [Op]) -> (result: Double?, remaining: [Op]){
         if !ops.isEmpty {
@@ -102,10 +114,13 @@ public class CalculatorModel {
                     return (operation(operand), operandEvaluation.remaining)
                 }
             case .BinaryOperation( _, let operation):
+                //get an operand from the stack
                 let operandEvaluation = evaluate(remainingOps)
                 if let firstOperand = operandEvaluation.result {
+                    // If we succeeded, get another operand with remaining stack from first evaluation
                     let operand2Evaluation = evaluate(operandEvaluation.remaining)
                     if let secondOperand = operand2Evaluation.result {
+                        //we have two operands. Run the function and return.
                         return (operation(firstOperand, secondOperand), operand2Evaluation.remaining)
                     }
                 }
