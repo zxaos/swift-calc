@@ -33,7 +33,6 @@ public class CalculatorModel {
     
     private var knownConstants = [String:Op]()
     private var knownOperations = [String:Op]()
-    
     private var stack = [Op]()
     
     public init() {
@@ -70,15 +69,23 @@ public class CalculatorModel {
         }
     }
     
-    public func performOperation(operation: String){
+    public func performOperation(operation: String) -> Double? {
         if let op = knownOperations[operation]{
             stack.append(op)
+            return evaluate(stack).result
         }
+        return nil
     }
+    
+    public func resetOperands(){
+        stack.removeAll(keepCapacity: true)
+    }
+    
     public func evaluate() -> Double? {
         return evaluate(stack).result
     }
     
+    /* Recursively evaluate an op stack*/
     private func evaluate(ops: [Op]) -> (result: Double?, remaining: [Op]){
         if !ops.isEmpty {
             var remainingOps = ops

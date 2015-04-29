@@ -12,22 +12,27 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var history: UILabel!
     @IBOutlet weak var display: UILabel!
+    var numberEntryInProgress = false
+    let calculator = CalculatorModel()
     
-    var displayValue: Double {
+    var displayValue: Double? {
         get {
-            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+            if let displayString = display.text{
+                return NSNumberFormatter().numberFromString(displayString)?.doubleValue
+            }
+            return nil
         }
         set {
-            if newValue == 0 {
-                display.text = "0"
+            if let numberToSet = newValue {
+                if numberToSet != 0 {
+                    display.text = "\(numberToSet)"
+                }
             } else {
-                display.text = "\(newValue)"
+                display.text = "0"
             }
         }
     }
     
-    var numberEntryInProgress = false
-    var stack = Array<Double>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,13 +52,9 @@ class ViewController: UIViewController {
     
     @IBAction func enterConstant(sender: UIButton) {
         let constant = sender.currentTitle!
-        var constantValue: Double = 0.0
-        switch constant {
-        case "π": constantValue = M_PI;
-        default:
-            break;
-        }
-        stack.append(constantValue)
+        calculator.pushOperand(constant)
+        
+        //TODO: This is prbably to migrate to the display
         history.text! += " \(constant)"
     }
     
@@ -74,14 +75,15 @@ class ViewController: UIViewController {
     
     @IBAction func enter() {
         if numberEntryInProgress {
-            stack.append(displayValue)
+            calculator.pushOperand(displayValue)
+            
+            //TODO: Migrate to display thing
             if let equalPosition = history.text!.rangeOfString(" =") {
                 history.text!.removeRange(equalPosition)
             }
             history.text! += " " + display.text!
             numberEntryInProgress = false
         }
-        println(stack)
     }
     
     @IBAction func removeLastDisplayNumber() {
@@ -110,7 +112,7 @@ class ViewController: UIViewController {
     @IBAction func clear() {
         history.text = " "
         displayValue = 0
-        stack.removeAll(keepCapacity: true)
+        calculator.resetOperands()
         numberEntryInProgress = false
     }
 
@@ -121,20 +123,7 @@ class ViewController: UIViewController {
         }
 
         let operation = sender.currentTitle!
-        var op_result = false
-        let wrapped_plus: (Double,Double) -> Double = (+)
-        switch operation {
-        case "+": op_result = performOperation { $0 + $1 }
-        case "−": op_result = performOperation { $0 - $1 }
-        case "×": op_result = performOperation( * )
-        case "÷": op_result = performOperation( / )
-        case "√": op_result = performOperation( sqrt )
-        case "sin": op_result = performOperation( sin )
-        case "cos": op_result = performOperation( cos )
-        default:
-            break
-        }
-        if op_result {
+        if let op_result = calculator.performOperation(operation){
             history.text! += " \(operation) ="
         }
     }
