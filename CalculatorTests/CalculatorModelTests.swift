@@ -48,17 +48,28 @@ class CalculatorModelTests: XCTestCase {
     }
     
     func testAddMultiplyOperatorPrecedence(){
-        // 1 + 2 * 3 = 7
-        // NOT 9
-        c.pushOperand(1)
+        // 2 + 3 * 4 = 14
+        // (2 + 3) * 4 = 20
         c.pushOperand(2)
         c.pushOperand(3)
+        c.pushOperand(4)
         c.performOperation("×")
         c.performOperation("+")
         let result = c.evaluate()
         XCTAssertNotNil(result)
         if result != nil {
-            XCTAssertEqual(result!, 7.0)
+            XCTAssertEqual(result!, 14.0)
+        }
+        // 1 * 2 + 3 = 5
+        c.resetOperands()
+        c.pushOperand(1)
+        c.pushOperand(2)
+        c.pushOperand(3)
+        c.performOperation("+")
+        c.performOperation("×")
+        XCTAssertNotNil(result)
+        if result != nil {
+            XCTAssertEqual(result!, 5.0)
         }
     }
 }

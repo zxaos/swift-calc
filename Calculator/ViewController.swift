@@ -129,4 +129,29 @@ class ViewController: UIViewController {
             history.text! += " \(operation) ="
         }
     }
+/*
+    func performOperation (op: (Double, Double) -> Double) -> Bool {
+        if stack.count >= 2 {
+            // swap the order of the last two operands so minus and divide make sense
+            // plus and multiply are commutative so we don't care
+            let last = stack.removeLast()
+            displayValue = op(stack.removeLast(), last)
+            //Set this here or else enter will not do anything
+            numberEntryInProgress = true
+            enter()
+            return true
+        }
+        return false
+    }
+    
+    private func performOperation (op: (Double) -> Double) -> Bool {
+        if stack.count >= 1 {
+            displayValue = op(stack.removeLast())
+            numberEntryInProgress = true
+            enter()
+            return true
+        }
+        return false
+    }
+*/
 }
