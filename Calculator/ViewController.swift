@@ -75,7 +75,7 @@ class ViewController: UIViewController {
     
     @IBAction func enter() {
         if numberEntryInProgress {
-            calculator.pushOperand(displayValue)
+            calculator.pushOperand(displayValue!)
             
             //TODO: Migrate to display thing
             if let equalPosition = history.text!.rangeOfString(" =") {
@@ -127,7 +127,7 @@ class ViewController: UIViewController {
             history.text! += " \(operation) ="
         }
     }
-    
+/*
     func performOperation (op: (Double, Double) -> Double) -> Bool {
         if stack.count >= 2 {
             // swap the order of the last two operands so minus and divide make sense
@@ -151,4 +151,5 @@ class ViewController: UIViewController {
         }
         return false
     }
+*/
 }
