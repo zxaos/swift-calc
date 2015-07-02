@@ -16,6 +16,7 @@ public class CalculatorModel : Printable{
         case BinaryOperation(String, (Double, Double) -> Double)
         case Operand(Double)
         case Constant(String, Double)
+        case Variable(String)
         
         var description: String {
             get {
@@ -28,6 +29,8 @@ public class CalculatorModel : Printable{
                     return symbol
                 case .Operand(let value):
                     return "\(value)"
+                case .Variable(let symbol):
+                    return symbol
                 }
             }
         }
@@ -74,6 +77,8 @@ public class CalculatorModel : Printable{
     public func pushOperand(operand: String){
         if let constant = knownConstants[operand]{
             stack.append(constant)
+        } else {
+            
         }
     }
     
@@ -101,21 +106,29 @@ public class CalculatorModel : Printable{
     
     /* Recursively evaluate an op stack*/
     private func evaluate(ops: [Op]) -> (result: Double?, remaining: [Op]){
-//        println("Evaluating Stack: \(ops)")
+        println("Evaluating Stack: \(ops)")
         if !ops.isEmpty {
             var remainingOps = ops
             let currentOp = remainingOps.removeLast()
+            
             switch currentOp {
+            
             case .Constant( _ , let value):
                 return (value, remainingOps)
+            
             case .Operand(let value):
                 return (value, remainingOps)
+            
+            case .Variable(let symbol):
+                return (variableValue[symbol], remainingOps)
+            
             case .UnaryOperation( _ , let operation ):
                 //get an operand from the stack
                 let operandEvaluation = evaluate(remainingOps)
                 if let operand = operandEvaluation.result {
                     return (operation(operand), operandEvaluation.remaining)
                 }
+            
             case .BinaryOperation( _, let operation):
                 //get an operand from the stack
                 let operandEvaluation = evaluate(remainingOps)
@@ -127,8 +140,9 @@ public class CalculatorModel : Printable{
                         return (operation(firstOperand, secondOperand), operand2Evaluation.remaining)
                     }
                 }
+                
             default:
-                return(nil, ops)
+                return(nil, remainingOps)
             }
         }
         return (nil, ops)
