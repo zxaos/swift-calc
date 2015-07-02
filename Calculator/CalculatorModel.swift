@@ -5,6 +5,8 @@
 //  Created by Matt Bond on 2015-04-26.
 //  Copyright (c) 2015 Codefire. All rights reserved.
 //
+
+//TODO: Handle variable interpolation
 import Foundation
 
 public class CalculatorModel : Printable{
@@ -99,6 +101,7 @@ public class CalculatorModel : Printable{
     
     /* Recursively evaluate an op stack*/
     private func evaluate(ops: [Op]) -> (result: Double?, remaining: [Op]){
+//        println("Evaluating Stack: \(ops)")
         if !ops.isEmpty {
             var remainingOps = ops
             let currentOp = remainingOps.removeLast()

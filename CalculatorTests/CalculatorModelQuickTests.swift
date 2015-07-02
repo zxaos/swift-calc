@@ -51,6 +51,7 @@ class CalculatorModelQuickTests: QuickSpec {
                 c.pushOperand(3)
                 c.performOperation("+")
                 c.performOperation("×")
+                //TODO: Add assertions here.
 //                XCTAssertNotNil(result)
 //                if result != nil {
 //                    XCTAssertEqual(result!, 5.0)
