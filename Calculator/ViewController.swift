@@ -17,16 +17,12 @@ class ViewController: UIViewController {
     
     var displayValue: Double? {
         get {
-            if let displayString = display.text{
-                return NSNumberFormatter().numberFromString(displayString)?.doubleValue
-            }
-            return nil
+            //numberFromString requires a string not an optional, so default to an empty string instead of nil.
+            return NSNumberFormatter().numberFromString(display.text ?? "")?.doubleValue
         }
         set {
-            if let numberToSet = newValue {
-                if numberToSet != 0 {
-                    display.text = "\(numberToSet)"
-                }
+            if newValue != 0 {
+                display.text = "\(newValue)"
             } else {
                 display.text = "0"
             }
