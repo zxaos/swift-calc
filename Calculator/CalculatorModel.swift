@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Codefire. All rights reserved.
 //
 
-//TODO: Handle variable interpolation
 import Foundation
 
 public class CalculatorModel : Printable{
@@ -70,22 +69,28 @@ public class CalculatorModel : Printable{
         }
     }
     
-    public func pushOperand(operand: Double){
+    public func pushOperand(operand: Double) -> Double? {
         stack.append(Op.Operand(operand))
+        return evaluate()
     }
     
-    public func pushOperand(operand: String){
-        if let constant = knownConstants[operand]{
+    public func pushOperand(symbol: String) -> Double? {
+        /* It's never specifically mentioned in the spec, so the assumption here is that
+         * any variables pushed that have the same name as constants will be masked by those
+         * constants, and will just not work (i.e. will use the constant value not the variable).
+        */
+        if let constant = knownConstants[symbol]{
             stack.append(constant)
         } else {
-            
+            stack.append(Op.Variable(symbol))
         }
+        return evaluate()
     }
     
     public func performOperation(operation: String) -> Double? {
         if let op = knownOperations[operation]{
             stack.append(op)
-            return evaluate(stack).result
+            return evaluate()
         }
         return nil
     }
