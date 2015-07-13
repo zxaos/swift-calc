@@ -109,7 +109,7 @@ public class CalculatorModel : Printable{
         }
     }
     
-    /* Recursively evaluate an op stack*/
+    // Recursively evaluate an op stack
     private func evaluate(ops: [Op]) -> (result: Double?, remaining: [Op]){
         println("Evaluating Stack: \(ops)")
         if !ops.isEmpty {
