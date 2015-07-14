@@ -168,14 +168,20 @@ public class CalculatorModel : Printable{
                 return (nil, remainingOps)
                 
             case .BinaryOperation:
-                //get an operand. If it works, get another. If that works, combine them with the operator and return
+                /* Get an operand. If it works, get another.
+                 * If that works, combine them with the operator and return
+                 * If it doesn't, fill with a literal '?'
+                 */
                 let firstEvaluation = evaluateDescription(remainingOps)
                 if let firstDescription = firstEvaluation.description {
                     let secondEvaluation = evaluateDescription(firstEvaluation.remaining)
+                    var description : String? = nil
                     if let secondDescription = secondEvaluation.description {
-                        let description = "\(secondDescription)\(currentOp.description)\(firstDescription)"
-                        return (description, secondEvaluation.remaining)
+                        description = "\(secondDescription)\(currentOp.description)\(firstDescription)"
+                    } else {
+                        description = "?\(currentOp.description)\(firstDescription)"
                     }
+                    return (description, secondEvaluation.remaining)
                 }
                 return (nil, remainingOps)
                 
