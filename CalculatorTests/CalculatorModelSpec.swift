@@ -61,14 +61,14 @@ class CalculatorModelSpec: QuickSpec {
             describe("shows the internal state as a readable expression"){
                 it("shows unary operations using funciton notation"){
                     c.pushOperand(10)
-                    c.pushOperand("cos");
+                    c.performOperation("cos");
                     expect(c.description).to(equal("cos(10)"))
                 }
                 
                 it("shows binary operations using infix notation"){
                     c.pushOperand(3)
                     c.pushOperand(5)
-                    c.pushOperand("−")
+                    c.performOperation("−")
                     expect(c.description).to(equal("3−5"))
                 }
                 
@@ -90,59 +90,59 @@ class CalculatorModelSpec: QuickSpec {
                 describe("and combines operation styles properly"){
                     it("combines unary and binary"){
                         c.pushOperand(10)
-                        c.pushOperand("√")
+                        c.performOperation("√")
                         c.pushOperand(3)
-                        c.pushOperand("+")
+                        c.performOperation("+")
                         expect(c.description).to(equal("√(10)+3"))
                     }
                     it("combines binary and unary"){
                         c.pushOperand(3)
                         c.pushOperand(5)
-                        c.pushOperand("+")
-                        c.pushOperand("√")
+                        c.performOperation("+")
+                        c.performOperation("√")
                         expect(c.description).to(equal("√(3+5)"))
                     }
                     it("combines binary and binary"){//naive
                         c.pushOperand(3)
                         c.pushOperand(5)
                         c.pushOperand(4)
-                        c.pushOperand("+")
-                        c.pushOperand("+")
+                        c.performOperation("+")
+                        c.performOperation("+")
                         expect(c.description).to(equal("3+(5+4)"))
                     }
-                    xit("combines binary and binary"){//proper
+                    it("combines binary and binary"){//proper
                         c.pushOperand(3)
                         c.pushOperand(5)
                         c.pushOperand(4)
-                        c.pushOperand("+")
-                        c.pushOperand("+")
+                        c.performOperation("+")
+                        c.performOperation("+")
                         expect(c.description).to(equal("3+5+4"))
                     }                   
                     it("combines unary and binary and unary and binary"){
                         c.pushOperand(3)
                         c.pushOperand(5)
-                        c.pushOperand("√")
-                        c.pushOperand("+")
-                        c.pushOperand("√")
+                        c.performOperation("√")
+                        c.performOperation("+")
+                        c.performOperation("√")
                         c.pushOperand(6)
-                        c.pushOperand("÷")
+                        c.performOperation("÷")
                         expect(c.description).to(equal("√(3+√(5))÷6"))
                     }
                 }
                 
                 it("displays a '?' in place of missing operands"){
                     c.pushOperand(3)
-                    c.pushOperand("+")
+                    c.performOperation("+")
                     expect(c.description).to(equal("?+3"))
                 }
                 
                 it("separates multiple complete expressions with commas"){
                     c.pushOperand(3)
                     c.pushOperand(5)
-                    c.pushOperand("+")
-                    c.pushOperand("√")
+                    c.performOperation("+")
+                    c.performOperation("√")
                     c.pushOperand("π")
-                    c.pushOperand("cos")
+                    c.performOperation("cos")
                     expect(c.description).to(equal("√(3+5),cos(π)"))
                 }
                 
@@ -150,8 +150,8 @@ class CalculatorModelSpec: QuickSpec {
                     c.pushOperand(3)
                     c.pushOperand(5)
                     c.pushOperand(4)
-                    c.pushOperand("+")
-                    c.pushOperand("×")
+                    c.performOperation("+")
+                    c.performOperation("×")
                     expect(c.description).to(equal("3×(5+4)"))
                 }
             }
