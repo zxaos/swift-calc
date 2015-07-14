@@ -27,7 +27,8 @@ public class CalculatorModel : Printable{
                 case .BinaryOperation(let symbol, _):
                     return symbol
                 case .Operand(let value):
-                    return "\(value)"
+                    //Strip the trailing .0 if it's a round number
+                    return value % 1 == 0 ? String(format: "%.0f", value) : "\(value)"
                 case .Variable(let symbol):
                     return symbol
                 }
@@ -105,13 +106,12 @@ public class CalculatorModel : Printable{
     
     public var description: String {
         get {
-            return ""
+            return evaluateDescription(stack).description ?? ""
         }
     }
     
     // Recursively evaluate an op stack
     private func evaluate(ops: [Op]) -> (result: Double?, remaining: [Op]){
-        println("Evaluating Stack: \(ops)")
         if !ops.isEmpty {
             var remainingOps = ops
             let currentOp = remainingOps.removeLast()
@@ -152,4 +152,38 @@ public class CalculatorModel : Printable{
         }
         return (nil, ops)
     }
+    
+    private func evaluateDescription(ops: [Op]) -> (description: String?, remaining: [Op]) {
+        if !ops.isEmpty {
+            var remainingOps = ops
+            let currentOp = remainingOps.removeLast()
+            
+            switch currentOp {
+            case .UnaryOperation:
+                //get operand for this
+                let operandEvaluation = evaluateDescription(remainingOps);
+                if let description = operandEvaluation.description {
+                    return ("\(currentOp.description)(\(description))", operandEvaluation.remaining)
+                }
+                return (nil, remainingOps)
+                
+            case .BinaryOperation:
+                //get an operand. If it works, get another. If that works, combine them with the operator and return
+                let firstEvaluation = evaluateDescription(remainingOps)
+                if let firstDescription = firstEvaluation.description {
+                    let secondEvaluation = evaluateDescription(firstEvaluation.remaining)
+                    if let secondDescription = secondEvaluation.description {
+                        let description = "\(secondDescription)\(currentOp.description)\(firstDescription)"
+                        return (description, secondEvaluation.remaining)
+                    }
+                }
+                return (nil, remainingOps)
+                
+            case .Operand, .Constant, .Variable:
+                return (currentOp.description, remainingOps)
+            }
+        }
+        return (nil, ops)
+    }
+    
  }
