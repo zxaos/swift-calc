@@ -106,7 +106,14 @@ public class CalculatorModel : Printable{
     
     public var description: String {
         get {
-            return evaluateDescription(stack).description ?? ""
+            var current : (description: String?, remaining: [Op]) = ("", stack)
+            var results : [String?] = []
+            do {
+                current = evaluateDescription(current.remaining)
+                results.append(current.description)
+            } while current.remaining.count > 1
+            //Drop nils, reverse the array, and stick a comma between every element.
+            return ",".join(results.filter({$0 != nil}).map({$0!}).reverse())
         }
     }
     
