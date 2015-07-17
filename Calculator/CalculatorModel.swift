@@ -11,8 +11,9 @@ import Foundation
 public class CalculatorModel : Printable{
     
     private enum Op : Printable {
-        case UnaryOperation(String, Double -> Double)
-        case BinaryOperation(String, (Double, Double) -> Double)
+        //(symbol, function, precedence)
+        case UnaryOperation(String, Double -> Double, Int)
+        case BinaryOperation(String, (Double, Double) -> Double, Int)
         case Operand(Double)
         case Constant(String, Double)
         case Variable(String)
@@ -22,9 +23,9 @@ public class CalculatorModel : Printable{
                 switch self{
                 case .Constant(let symbol, _):
                     return symbol
-                case .UnaryOperation(let symbol, _):
+                case .UnaryOperation(let symbol, _, _):
                     return symbol
-                case .BinaryOperation(let symbol, _):
+                case .BinaryOperation(let symbol, _, _):
                     return symbol
                 case .Operand(let value):
                     //Strip the trailing .0 if it's a round number
@@ -39,6 +40,8 @@ public class CalculatorModel : Printable{
     private var knownConstants = [String:Op]()
     private var knownOperations = [String:Op]()
     private var stack = [Op]()
+    //B-$ E-3 DM-2 AS-1
+    private let highestPrecedence = 5
     
     public init() {
         func learnOp(op: Op){
@@ -54,13 +57,13 @@ public class CalculatorModel : Printable{
         }
         
         learnOp(Op.Constant("π", M_PI))
-        learnOp(Op.BinaryOperation("+", +))
-        learnOp(Op.BinaryOperation("−", { $1 - $0 } ))
-        learnOp(Op.BinaryOperation("×", * ))
-        learnOp(Op.BinaryOperation("÷", { $1 / $0 } ))
-        learnOp(Op.UnaryOperation("√", sqrt ))
-        learnOp(Op.UnaryOperation("sin", sin ))
-        learnOp(Op.UnaryOperation("cos", cos ))
+        learnOp(Op.BinaryOperation("+", +, 1))
+        learnOp(Op.BinaryOperation("−", { $1 - $0 }, 1))
+        learnOp(Op.BinaryOperation("×", *, 2))
+        learnOp(Op.BinaryOperation("÷", { $1 / $0 }, 2))
+        learnOp(Op.UnaryOperation("√", sqrt, 4))
+        learnOp(Op.UnaryOperation("sin", sin, 4))
+        learnOp(Op.UnaryOperation("cos", cos, 4 ))
         
     }
     
@@ -106,7 +109,7 @@ public class CalculatorModel : Printable{
     
     public var description: String {
         get {
-            var current : (description: String?, remaining: [Op]) = ("", stack)
+            var current : (description: String?, remaining: [Op], precedence: Int) = ("", stack, highestPrecedence)
             var results : [String?] = []
             do {
                 current = evaluateDescription(current.remaining)
@@ -134,14 +137,14 @@ public class CalculatorModel : Printable{
             case .Variable(let symbol):
                 return (variableValue[symbol], remainingOps)
             
-            case .UnaryOperation( _ , let operation ):
+            case .UnaryOperation( _ , let operation, _):
                 //get an operand from the stack
                 let operandEvaluation = evaluate(remainingOps)
                 if let operand = operandEvaluation.result {
                     return (operation(operand), operandEvaluation.remaining)
                 }
             
-            case .BinaryOperation( _, let operation):
+            case .BinaryOperation( _, let operation, _):
                 //get an operand from the stack
                 let operandEvaluation = evaluate(remainingOps)
                 if let firstOperand = operandEvaluation.result {
@@ -160,43 +163,49 @@ public class CalculatorModel : Printable{
         return (nil, ops)
     }
     
-    private func evaluateDescription(ops: [Op]) -> (description: String?, remaining: [Op]) {
+    private func evaluateDescription(ops: [Op]) -> (description: String?, remaining: [Op], precedence: Int) {
         if !ops.isEmpty {
             var remainingOps = ops
             let currentOp = remainingOps.removeLast()
             
             switch currentOp {
-            case .UnaryOperation:
+            
+            case .Operand, .Constant, .Variable:
+                return (currentOp.description, remainingOps, highestPrecedence)
+            
+            case .UnaryOperation (let description, _, let precedence):
                 //get operand for this
                 let operandEvaluation = evaluateDescription(remainingOps);
-                if let description = operandEvaluation.description {
-                    return ("\(currentOp.description)(\(description))", operandEvaluation.remaining)
+                if let result = operandEvaluation.description {
+                    //No serious precedence processing here since we are always wrapping with parens.
+                    return ("\(description)(\(result))", operandEvaluation.remaining, precedence)
                 }
-                return (nil, remainingOps)
+                return (nil, remainingOps, highestPrecedence)
                 
-            case .BinaryOperation:
-                /* Get an operand. If it works, get another.
-                 * If that works, combine them with the operator and return
-                 * If it doesn't, fill with a literal '?'
+            case .BinaryOperation (let description, _, let currentPrecedence):
+                /* The simplest case is when there is no result to the first evaluation - nil.
+                 * Otherwise, we do a separate evaluation and build our string, falling back to
+                 * a literal ? if the second evaluation fails.
+                 * For both evaluations, wrap with extra parenthesis if the precedence of evaluation is lower
+                 * than this to preserve proper order of operations in the output.
                  */
+                
+                // second result, operation, first result
+                var result = ["?", description, ""]
+                
                 let firstEvaluation = evaluateDescription(remainingOps)
                 if let firstDescription = firstEvaluation.description {
+                    result[2] = firstEvaluation.precedence < currentPrecedence ? "(\(firstDescription))" : firstDescription
                     let secondEvaluation = evaluateDescription(firstEvaluation.remaining)
-                    var description : String? = nil
                     if let secondDescription = secondEvaluation.description {
-                        description = "\(secondDescription)\(currentOp.description)\(firstDescription)"
-                    } else {
-                        description = "?\(currentOp.description)\(firstDescription)"
+                        result[0] = secondEvaluation.precedence < currentPrecedence ? "(\(secondDescription))" : secondDescription
                     }
-                    return (description, secondEvaluation.remaining)
+                    return ("".join(result), secondEvaluation.remaining, currentPrecedence)
                 }
-                return (nil, remainingOps)
-                
-            case .Operand, .Constant, .Variable:
-                return (currentOp.description, remainingOps)
+                return (nil, remainingOps, currentPrecedence)
             }
         }
-        return (nil, ops)
+        // send back nil if there's no operations to process.
+        return (nil, ops, highestPrecedence)
     }
-    
  }

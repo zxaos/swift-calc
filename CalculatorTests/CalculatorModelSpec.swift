@@ -100,15 +100,7 @@ class CalculatorModelSpec: QuickSpec {
                     c.performOperation("√")
                     expect(c.description).to(equal("√(3+5)"))
                 }
-                it("combines binary and binary"){//naive
-                    c.pushOperand(3)
-                    c.pushOperand(5)
-                    c.pushOperand(4)
-                    c.performOperation("+")
-                    c.performOperation("+")
-                    expect(c.description).to(equal("3+(5+4)"))
-                }
-                it("combines binary and binary"){//proper
+                it("combines binary and binary"){//don't apply unnecessary parens
                     c.pushOperand(3)
                     c.pushOperand(5)
                     c.pushOperand(4)
