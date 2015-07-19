@@ -26,7 +26,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Display" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TyB-rA-0u7">
                                 <rect key="frame" x="481" y="45" width="103" height="39"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cUk-E2-uOC">
@@ -145,6 +145,9 @@
                                 <state key="normal" title="M">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="getMemory" destination="BYZ-38-t0r" eventType="touchUpInside" id="dzU-mR-dRV"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Huz-G4-qM6">
                                 <rect key="frame" x="24" y="92" width="104" height="94"/>
@@ -152,6 +155,9 @@
                                 <state key="normal" title="→M">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="setMemory" destination="BYZ-38-t0r" eventType="touchUpInside" id="WUJ-0z-rYi"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M1a-QU-CZJ">
                                 <rect key="frame" x="248" y="194" width="104" height="93"/>
@@ -467,6 +473,7 @@
                                 <exclude reference="Whv-6Q-49D"/>
                                 <exclude reference="XZn-lz-qBq"/>
                                 <exclude reference="l9C-Jk-Lvz"/>
+                                <exclude reference="DOF-EA-hFd"/>
                                 <exclude reference="5ba-6z-NX8"/>
                                 <exclude reference="96T-ZL-43i"/>
                                 <exclude reference="97t-hf-bWE"/>
@@ -482,7 +489,6 @@
                                 <exclude reference="eJK-a2-M6F"/>
                                 <exclude reference="l1l-oH-ErZ"/>
                                 <exclude reference="u50-7j-Gs2"/>
-                                <exclude reference="DOF-EA-hFd"/>
                                 <exclude reference="Otr-jX-Pwm"/>
                                 <exclude reference="eck-7d-tBo"/>
                                 <exclude reference="nU9-3d-g2B"/>
@@ -495,12 +501,12 @@
                                 <exclude reference="mCR-KH-AVt"/>
                                 <exclude reference="2Oy-TH-wTL"/>
                                 <exclude reference="adH-fl-wem"/>
-                                <exclude reference="LNh-Zb-bb6"/>
-                                <exclude reference="7Fh-6u-4Zl"/>
                                 <exclude reference="JI6-v4-fxL"/>
                                 <exclude reference="O6w-gc-7fk"/>
                                 <exclude reference="ayh-YX-WWa"/>
                                 <exclude reference="eTQ-Bq-ava"/>
+                                <exclude reference="LNh-Zb-bb6"/>
+                                <exclude reference="7Fh-6u-4Zl"/>
                             </mask>
                         </variation>
                     </view>

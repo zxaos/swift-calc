@@ -24,13 +24,13 @@ class ViewController: UIViewController {
             return NSNumberFormatter().numberFromString(display.text ?? "")?.doubleValue
         }
         set {
-            if newValue != nil && newValue! != 0 {
+            if newValue == nil{
+                display.text = " "
+            } else {
                 //if we have a real number unwrap it and discard any ".0" component
                 display.text = (newValue! % 1 == 0 ? String(format: "%.0f", newValue!) : "\(newValue!)")
-            } else {
-                display.text = "0"
             }
-            history.text = count(calculator.description) > 0 ? calculator.description + " =" : " "
+            history.text = count(calculator.description) > 1 ? calculator.description + " =" : " "
         }
     }
     
@@ -100,6 +100,7 @@ class ViewController: UIViewController {
     
     @IBAction func clear() {
         calculator.resetOperands()
+        calculator.variableValue.removeAll(keepCapacity: true)
         displayValue = nil
         numberEntryInProgress = false
     }
@@ -110,10 +111,23 @@ class ViewController: UIViewController {
         }
 
         let operation = sender.currentTitle!
-        if let op_result = calculator.performOperation(operation){
-            displayValue = op_result
+        displayValue = calculator.performOperation(operation)
+    }
+    
+    @IBAction func setMemory() {
+        if let value = displayValue {
+            calculator.variableValue["M"] = value
+            numberEntryInProgress = false;
+            displayValue = calculator.evaluate()
         }
     }
+    
+    @IBAction func getMemory() {
+        let result = calculator.pushOperand("M")
+        if result != nil {
+            displayValue = result
+        }
+    }
+    
 }
 
-//TODO: Operation behaviour is now weird. Figure out a way to properly update the display in a simple way - both the history and the Display are behaving poorly.
