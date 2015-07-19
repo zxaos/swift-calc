@@ -10,30 +10,33 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    
     @IBOutlet weak var history: UILabel!
     @IBOutlet weak var display: UILabel!
-    var numberEntryInProgress = false
+
     let calculator = CalculatorModel()
     
+    var numberEntryInProgress = false
+
     var displayValue: Double? {
         get {
             //numberFromString requires a string not an optional, so default to an empty string instead of nil.
             return NSNumberFormatter().numberFromString(display.text ?? "")?.doubleValue
         }
         set {
-            if newValue != 0 {
-                display.text = "\(newValue)"
+            if newValue != nil && newValue! != 0 {
+                //if we have a real number unwrap it and discard any ".0" component
+                display.text = (newValue! % 1 == 0 ? String(format: "%.0f", newValue!) : "\(newValue!)")
             } else {
                 display.text = "0"
             }
+            history.text = count(calculator.description) > 0 ? calculator.description + " =" : " "
         }
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        display.text = "0"
+        displayValue = 0
         history.text = " "
     }
     
@@ -72,12 +75,6 @@ class ViewController: UIViewController {
             if let number = displayValue {
                 calculator.pushOperand(number)
             }
-            
-            //TODO: Migrate to display thing
-            if let equalPosition = history.text!.rangeOfString(" =") {
-                history.text!.removeRange(equalPosition)
-            }
-            history.text! += " " + display.text!
             numberEntryInProgress = false
         }
     }
@@ -86,7 +83,7 @@ class ViewController: UIViewController {
         if numberEntryInProgress {
             let entrylength = count(display.text!)
             if entrylength == 1 {
-                display.text = "0"
+                displayValue = nil
                 numberEntryInProgress = false
             } else if entrylength > 1 {
                 display.text = dropLast(display.text!)
@@ -97,55 +94,26 @@ class ViewController: UIViewController {
     
     @IBAction func toggleSign() {
         if numberEntryInProgress{
-            if let negString =  display.text!.rangeOfString("-"){
-                display.text!.removeRange(negString)
-            } else {
-                display.text! = "-\(display.text!)"
-            }
+            displayValue! *= -1
         }
     }
     
     @IBAction func clear() {
-        history.text = " "
-        displayValue = 0
         calculator.resetOperands()
+        displayValue = nil
         numberEntryInProgress = false
     }
 
     @IBAction func enterOperation(sender: UIButton) {
         if numberEntryInProgress {
-            println("Implicit enter")
             enter()
         }
 
         let operation = sender.currentTitle!
         if let op_result = calculator.performOperation(operation){
-            history.text! += " \(operation) ="
+            displayValue = op_result
         }
     }
-/*
-    func performOperation (op: (Double, Double) -> Double) -> Bool {
-        if stack.count >= 2 {
-            // swap the order of the last two operands so minus and divide make sense
-            // plus and multiply are commutative so we don't care
-            let last = stack.removeLast()
-            displayValue = op(stack.removeLast(), last)
-            //Set this here or else enter will not do anything
-            numberEntryInProgress = true
-            enter()
-            return true
-        }
-        return false
-    }
-    
-    private func performOperation (op: (Double) -> Double) -> Bool {
-        if stack.count >= 1 {
-            displayValue = op(stack.removeLast())
-            numberEntryInProgress = true
-            enter()
-            return true
-        }
-        return false
-    }
-*/
 }
+
+//TODO: Operation behaviour is now weird. Figure out a way to properly update the display in a simple way - both the history and the Display are behaving poorly.
