@@ -17,6 +17,16 @@ class CalculatorModelSpec: QuickSpec {
         beforeEach {
             c = CalculatorModel();
         }
+
+        describe("getConstantValue"){
+            it("gets the numeric value of a constant that exists"){
+               expect(c.getConstantValue("π")).to(equal(M_PI))
+            }
+
+            it("returns nil for unknown constants"){
+                expect(c.getConstantValue("q")).to(beNil())
+            }
+        }
         
         describe("allows variables"){
         

@@ -72,6 +72,19 @@ public class CalculatorModel : Printable{
             evaluate(stack)
         }
     }
+
+    public func getConstantValue(constant: String) -> Double? {
+        //Return the double value of the constant if it exists.
+        if let constant = knownConstants[constant] {
+            switch constant {
+            case .Constant(_, let value):
+                return value
+            default:
+                return nil
+            }
+        }
+        return nil;
+    }
     
     public func pushOperand(operand: Double) -> Double? {
         stack.append(Op.Operand(operand))

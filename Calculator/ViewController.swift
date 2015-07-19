@@ -49,11 +49,9 @@ class ViewController: UIViewController {
     @IBAction func enterConstant(sender: UIButton) {
         let constant = sender.currentTitle!
         calculator.pushOperand(constant)
-        
-        //TODO: This is prbably to migrate to the display
-        history.text! += " \(constant)"
+        displayValue = calculator.getConstantValue(constant)
+        numberEntryInProgress = false;
     }
-    
     
     @IBAction func enterDecimal() {
         if (numberEntryInProgress){
