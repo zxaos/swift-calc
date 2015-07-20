@@ -19,16 +19,14 @@ class ViewController: UIViewController {
     var numberEntryInProgress = false
 
     var displayValue: Double? {
-        get {
-            //numberFromString requires a string not an optional, so default to an empty string instead of nil.
+        get { //numberFromString requires a string not an optional, so default to an empty string instead of nil.
             return NSNumberFormatter().numberFromString(display.text ?? "")?.doubleValue
         }
         set {
-            if newValue == nil{
-                display.text = " "
+            if let newValue = newValue{ //if we have a real number unwrap it and discard any ".0" component
+                display.text = (newValue % 1 == 0 ? String(format: "%.0f", newValue) : "\(newValue)")
             } else {
-                //if we have a real number unwrap it and discard any ".0" component
-                display.text = (newValue! % 1 == 0 ? String(format: "%.0f", newValue!) : "\(newValue!)")
+                display.text = " "
             }
             history.text = count(calculator.description) > 1 ? calculator.description + " =" : " "
         }
@@ -41,10 +39,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func enterDigit(sender: UIButton) {
-        if !numberEntryInProgress {
-            display.text = sender.currentTitle!
-        } else {
+        if numberEntryInProgress {
             display.text! += sender.currentTitle!
+        } else {
+            display.text = sender.currentTitle!
         }
         numberEntryInProgress = true
     }
@@ -61,41 +59,32 @@ class ViewController: UIViewController {
             if display.text?.rangeOfString(".") == nil {
                 // no decimal was found, so it's safe to add one
                 display.text! += "."
-            }
+            } //else there's already a decimal so do nothing
         } else {
-            // This must be the first button pressed in the current number
-            // So prepand a zero
+            // This must be the first button pressed in a number so prepand a zero
             display.text = "0."
             numberEntryInProgress = true
         }
     }
     
     @IBAction func enter() {
-        if numberEntryInProgress {
-            if let number = displayValue {
-                calculator.pushOperand(number)
-                /* Set the display value here. If we do this there's two benefits:
-                 * We drop any trailing .0 (so 5.0 enter shows '5'), and setting the
-                 * display updates the history, making it far more useful. So yeah.
-                 */
-                displayValue = number
-            }
+        if let number = displayValue where numberEntryInProgress {
+            /* Set the display value here. If we do this there's two benefits:
+             * We drop any trailing .0 (so 5.0 enter shows '5'), and setting the
+             * display updates the history, making it far more useful. So yeah.
+             */
+            calculator.pushOperand(number)
+            displayValue = number
             numberEntryInProgress = false
         }
     }
     
-    @IBAction func undo() {
+    @IBAction func enterOperation(sender: UIButton) {
         if numberEntryInProgress {
-            let entrylength = count(display.text!)
-            if entrylength == 1 {
-                displayValue = nil
-                numberEntryInProgress = false
-            } else if entrylength > 1 {
-                display.text = dropLast(display.text!)
-            }
-        } else { // else drop the last stack item in the model
-            displayValue = calculator.undoOp()
+            enter()
         }
+        let operation = sender.currentTitle!
+        displayValue = calculator.performOperation(operation)
     }
     
     @IBAction func toggleSign() {
@@ -104,20 +93,26 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction func undo() { // not a real undo. It's also sometimes backspace :-)
+        if numberEntryInProgress {
+            let entrylength = count(display.text!)
+            if entrylength == 1 {
+                displayValue = nil
+                numberEntryInProgress = false
+            } else if entrylength > 1 {
+                display.text = dropLast(display.text!)
+            }
+            
+        } else { // else drop the last stack item in the model
+            displayValue = calculator.undoOp()
+        }
+    }
+    
     @IBAction func clear() {
         calculator.resetOperands()
         calculator.variableValue.removeAll(keepCapacity: true)
         displayValue = nil
         numberEntryInProgress = false
-    }
-
-    @IBAction func enterOperation(sender: UIButton) {
-        if numberEntryInProgress {
-            enter()
-        }
-
-        let operation = sender.currentTitle!
-        displayValue = calculator.performOperation(operation)
     }
     
     @IBAction func setMemory() {
@@ -129,11 +124,9 @@ class ViewController: UIViewController {
     }
     
     @IBAction func getMemory() {
-        let result = calculator.pushOperand("M")
-        if result != nil {
+        if let result = calculator.pushOperand("M") {
             displayValue = result
         }
     }
-    
 }
 
