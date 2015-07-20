@@ -116,6 +116,13 @@ public class CalculatorModel : Printable{
         stack.removeAll(keepCapacity: true)
     }
     
+    public func undoOp() -> Double? {
+        if count(stack) > 0{
+            stack.removeLast()
+        }
+        return evaluate()
+    }
+    
     public func evaluate() -> Double? {
         return evaluate(stack).result
     }
@@ -127,7 +134,7 @@ public class CalculatorModel : Printable{
             do {
                 current = evaluateDescription(current.remaining)
                 results.append(current.description)
-            } while current.remaining.count > 1
+            } while current.remaining.count > 0
             //Drop nils, reverse the array, and stick a comma between every element.
             return ",".join(results.filter({$0 != nil}).map({$0!}).reverse())
         }

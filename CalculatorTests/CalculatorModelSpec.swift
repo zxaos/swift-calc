@@ -146,6 +146,13 @@ class CalculatorModelSpec: QuickSpec {
                 expect(c.description).to(equal("√(3+5),cos(π)"))
             }
             
+            it ("separates individual numbers like they were complete expressions"){
+                c.pushOperand(3)
+                c.pushOperand(5)
+                expect(c.evaluate()).to(equal(5))
+                expect(c.description).to(equal("3,5"))
+            }
+            
             it("adds parenthesis to ensure expression matches output"){
                 c.pushOperand(3)
                 c.pushOperand(5)
@@ -153,6 +160,15 @@ class CalculatorModelSpec: QuickSpec {
                 c.performOperation("+")
                 c.performOperation("×")
                 expect(c.description).to(equal("3×(5+4)"))
+            }
+            
+            it("can undo stack entries"){
+                c.pushOperand(3)
+                c.pushOperand(5)
+                c.performOperation("+")
+                c.performOperation("√")
+                c.undoOp()
+                expect(c.evaluate()).to(equal(8))
             }
         }
     }

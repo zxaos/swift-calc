@@ -74,12 +74,17 @@ class ViewController: UIViewController {
         if numberEntryInProgress {
             if let number = displayValue {
                 calculator.pushOperand(number)
+                /* Set the display value here. If we do this there's two benefits:
+                 * We drop any trailing .0 (so 5.0 enter shows '5'), and setting the
+                 * display updates the history, making it far more useful. So yeah.
+                 */
+                displayValue = number
             }
             numberEntryInProgress = false
         }
     }
     
-    @IBAction func removeLastDisplayNumber() {
+    @IBAction func undo() {
         if numberEntryInProgress {
             let entrylength = count(display.text!)
             if entrylength == 1 {
@@ -88,7 +93,8 @@ class ViewController: UIViewController {
             } else if entrylength > 1 {
                 display.text = dropLast(display.text!)
             }
-            // else it's 0, so do nothing
+        } else { // else drop the last stack item in the model
+            displayValue = calculator.undoOp()
         }
     }
     
