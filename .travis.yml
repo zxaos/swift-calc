@@ -2,5 +2,6 @@ language: objective-c
 osx_image: xcode6.4
 xcode_project: Calculator.xcodeproj
 xcode_scheme: CalculatorTests
+xcode_sdk: iphonesimulator
 before_install:
   - git submodule update --init --recursive
