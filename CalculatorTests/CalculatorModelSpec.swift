@@ -1,5 +1,5 @@
 //
-//  CalculatorModelQuickTests.swift
+//  CalculatorModelSpec.swift
 //  Calculator
 //
 //  Created by Matt Bond on 2015-06-13.
