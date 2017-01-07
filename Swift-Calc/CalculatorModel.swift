@@ -25,34 +25,47 @@ class CalculatorModel {
             accumulator = value
         case .unary(let function):
             accumulator = function(accumulator)
-        case .binary:
-            print("Binary operation")
+        case .binary(let function):
+            runPendingBinaryOperation()
+            pendingBinaryOp = PendingBinaryOperation(binaryFunction: function, operand: accumulator)
         case .equals:
-            print("Equals")
+            runPendingBinaryOperation()
         }
     }
     
     private var accumulator = 0.0
-    private var pendingBinaryOp : OperationType?
+    private var pendingBinaryOp : PendingBinaryOperation?
+    
+    private func runPendingBinaryOperation() {
+        if pendingBinaryOp != nil {
+            accumulator = pendingBinaryOp!.binaryFunction(pendingBinaryOp!.operand, accumulator)
+            pendingBinaryOp = nil
+        }
+    }
+    
+    private struct PendingBinaryOperation {
+        var binaryFunction: (Double, Double) -> Double
+        var operand: Double
+    }
   
     private enum OperationType {
         case constant(Double)
         case unary( (Double) -> Double )
         case binary( (Double, Double) -> Double )
         case equals
-//        if pending != nil {
-//            accumulator = pendingBinary
-//        }
     }
     
     private let operations: Dictionary<String,OperationType> = [
         "π" : .constant(M_PI),
         "e" : .constant(M_E),
         "√" : .unary(sqrt),
-        "+" : .binary( + ),
-        "−" : .binary( - ),
-        "×" : .binary( * ),
-        "÷" : .binary( { $1 / $0 } ),
+        "±" : .unary({ -$0}),
+        // These could just be the plain operator (e.g. +) but it makes xcode
+        // unhappy because it has to examine too many options to resolve the type?
+        "+" : .binary( { $0 + $1} ), 
+        "−" : .binary( { $0 - $1} ),
+        "×" : .binary( { $0 * $1} ),
+        "÷" : .binary( { $0 / $1} ),
         "=" : .equals
     ]
 }
