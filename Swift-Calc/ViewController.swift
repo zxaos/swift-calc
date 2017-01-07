@@ -9,17 +9,36 @@
 import UIKit
 
 class ViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    
+    private let model = CalculatorModel()
+    
+    private var numberEntryInProgress = false;
+    
+    @IBOutlet private weak var display: UILabel!
+    
+    private var displayValue: Double {
+        get { return Double(display.text!)! }
+        set { display.text = String(newValue) }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    @IBAction private func digitButtonTapped(_ button: UIButton) {
+        let title = button.currentTitle!
+        if numberEntryInProgress {
+            display.text! += title
+        } else {
+            display.text! = title
+            numberEntryInProgress = true
+        }
     }
-
-
+    
+    @IBAction private func operationButtonTapped(_ button: UIButton) {
+        guard let title = button.currentTitle else {return}
+        if (numberEntryInProgress) {
+            model.setOperand(displayValue)
+            numberEntryInProgress = false
+        }
+        model.performOperation(title)
+        displayValue = model.result
+    }
 }
 
