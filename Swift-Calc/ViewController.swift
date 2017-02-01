@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     
     private var displayValue: Double {
         get { return Double(display.text!)! }
-        set { display.text = String(newValue) }
+        set { display.text = String(format: "%g", newValue) }
     }
     
     @IBAction private func digitButtonTapped(_ button: UIButton) {
@@ -39,6 +39,16 @@ class ViewController: UIViewController {
         }
         model.performOperation(title)
         displayValue = model.result
+    }
+    @IBAction func dotButtonTapped(_ sender: UIButton) {
+        if (numberEntryInProgress){
+            if (!display.text!.contains(".")) {
+                display.text! += "."
+            }
+        } else {
+            display.text = "0."
+            numberEntryInProgress = true
+        }
     }
 }
 

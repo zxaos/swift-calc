@@ -30,6 +30,9 @@ class CalculatorModel {
             pendingBinaryOp = PendingBinaryOperation(binaryFunction: function, operand: accumulator)
         case .equals:
             runPendingBinaryOperation()
+        case .clear:
+            accumulator = 0
+            pendingBinaryOp = nil
         }
     }
     
@@ -53,19 +56,25 @@ class CalculatorModel {
         case unary( (Double) -> Double )
         case binary( (Double, Double) -> Double )
         case equals
+        case clear
     }
     
     private let operations: Dictionary<String,OperationType> = [
         "π" : .constant(M_PI),
         "e" : .constant(M_E),
+        "xʸ" : .binary( pow ),
+        "¹/ₓ": .unary( {pow($0, -1)} ),
+        "eˣ": .unary( {pow(M_E, $0)} ),
+        "x²": .unary( {pow($0, 2)} ),
         "√" : .unary(sqrt),
         "±" : .unary({ -$0}),
         // These could just be the plain operator (e.g. +) but it makes xcode
         // unhappy because it has to examine too many options to resolve the type?
-        "+" : .binary( { $0 + $1} ), 
+        "+" : .binary( { $0 + $1} ),
         "−" : .binary( { $0 - $1} ),
         "×" : .binary( { $0 * $1} ),
         "÷" : .binary( { $0 / $1} ),
-        "=" : .equals
+        "=" : .equals,
+        "C" : .clear
     ]
 }
